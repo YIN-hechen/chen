@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".splash.SplashActivity">
-    <fragment
-        android:id="@+id/splashPagerFragment"
-        android:name="feicuiedu.com.gitdroid.splash.SplashPagerFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/buttonBar"/>
+    tools:context=".SplashActivity">
+    <!--<fragment-->
+        <!--android:id="@+id/splashPagerFragment"-->
+        <!--android:name="feicuiedu.com.gitdroid.splash.SplashPagerFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_above="@+id/buttonBar"/>-->
 
     <LinearLayout
         android:id="@+id/buttonBar"
