@@ -12,13 +12,8 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <me.relex.circleindicator.CircleIndicator
-        android:id="@+id/indicator"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_60"
-        android:layout_gravity="bottom"
-        app:ci_drawable="@drawable/circle_indicator"/>
 
+    <!--手机图片,在代码内有单独动画实现-->
     <FrameLayout
         android:id="@+id/layoutPhone"
         android:layout_width="match_parent"
@@ -30,12 +25,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             tools:ignore="UselessParent">
-
+            <!--手机框-->
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/phone" />
+            <!--手机内容-->
             <ImageView
                 android:id="@+id/ivPhoneBlank"
                 android:layout_width="wrap_content"
@@ -44,6 +40,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginRight="5dp"
                 android:src="@drawable/screen_blank_large" />
+            <!--手机内容,默认alpha=0-->
             <ImageView
                 android:id="@+id/ivPhone"
                 android:layout_width="wrap_content"
@@ -57,5 +54,12 @@
         </FrameLayout>
 
     </FrameLayout>
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_60"
+        android:layout_gravity="bottom"
+        app:ci_drawable="@drawable/circle_indicator"/>
 
 </FrameLayout>
