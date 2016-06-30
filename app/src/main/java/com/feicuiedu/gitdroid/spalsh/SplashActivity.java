@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
-import com.feicuiedu.gitdroid.MainActivity;
+import com.feicuiedu.gitdroid.home.MainActivity;
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.Utils.ActivityUtils;
 
