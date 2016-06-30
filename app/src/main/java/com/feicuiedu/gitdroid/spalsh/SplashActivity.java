@@ -45,6 +45,7 @@ public class SplashActivity extends AppCompatActivity{
 
     @OnClick(R.id.btnEnter)
     public void enter(){
+
         mUtils.startActivity(MainActivity.class);
     }
 

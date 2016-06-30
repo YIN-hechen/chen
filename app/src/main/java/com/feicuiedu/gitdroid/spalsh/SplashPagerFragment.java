@@ -25,7 +25,7 @@ import me.relex.circleindicator.CircleIndicator;
  */
 public class SplashPagerFragment extends Fragment implements ViewPager.OnPageChangeListener {
 
-   @Bind(R.id.viewPager)ViewPager viewpager;
+    @Bind(R.id.viewPager)ViewPager viewpager;
     @Bind(R.id.indicator)CircleIndicator indicator;//指示器(下面的指示点)
     @Bind(R.id.content)FrameLayout framlayout;    //整个布局的老大  用于显示背景色的变化
     @BindColor(R.color.colorGreen) int colorGreen;   //资源绿色
