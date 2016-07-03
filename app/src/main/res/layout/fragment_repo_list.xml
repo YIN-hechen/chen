@@ -20,7 +20,7 @@
             android:divider="@null"
             android:visibility="visible"/>
     </in.srain.cube.views.ptr.PtrClassicFrameLayout>
-
+   <!--空白视图-->
     <TextView
         android:id="@+id/emptyView"
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
         android:gravity="center"
         android:text="@string/no_content"
         android:visibility="gone"/>
-
+<!--错误视图-->
     <TextView
         android:id="@+id/errorView"
         android:layout_width="match_parent"

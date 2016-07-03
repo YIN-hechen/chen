@@ -28,26 +28,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
-    }
+
+
 
     @Override
     public void onContentChanged() {
         super.onContentChanged();
-        ButterKnife.bind(this);
+        ButterKnife.bind(this);//关联id
 
         navigationView.setNavigationItemSelectedListener(this); //设置navigationView侧滑菜单的监听
 
         mMenuItem=navigationView.getMenu().findItem(R.id.github_hot_repo);//找到侧滑菜单中的菜单中的"最热门"按键
         mMenuItem.setChecked(true);//使"最热门"按键默认成为点击状态
 
+
         //添加Toolbar左边的小图标
+
+        //添加Toolbar左边的小图标并进行动画效果
+
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(
                 this,drawerLayout,toolbar,
@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.replace(R.id.container,mHotRepoFragment);
         fragmentTransaction.commit();
 
-
     }
 
     @Override//侧滑菜单监听的回调
@@ -74,10 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     switch (item.getItemId()){
         case R.id.tips_share:
             drawerLayout.closeDrawer(GravityCompat.START);//按下分享,关闭抽屉
-
             break;
-
-
     }
 
         return true;//返回true,代表该菜单单项变为checked状态
@@ -93,5 +89,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
     }
 }
