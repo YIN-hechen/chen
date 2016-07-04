@@ -3,6 +3,8 @@ package com.feicuiedu.gitdroid.home;
 import android.os.AsyncTask;
 
 import com.feicuiedu.gitdroid.view.PtrPageView;
+import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
+import com.hannesdorfmann.mosby.mvp.MvpPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +16,7 @@ import java.util.Random;
  * 具体要做的业务(下拉刷新获取数据, 上拉加载更多数据), 以及视图的触发
  * Created by Administrator on 2016/7/3.
  */
-public class ReopListPresenter {
-   private PtrPageView ptrPageView;
-    public ReopListPresenter(PtrPageView ptrPageView) {
-        this.ptrPageView=ptrPageView;
-    }
+public class ReopListPresenter extends MvpNullObjectBasePresenter<PtrPageView> implements MvpPresenter<PtrPageView> {
 
 
     // 这是下拉刷新视图层的业务逻辑-----------------------------------------------------------
@@ -47,14 +45,14 @@ public class ReopListPresenter {
            super.onPostExecute(strings);
            int size = strings.size();
            if (size == 2) {
-               ptrPageView.showEmptyView();//显示空白视图
+               getView().showEmptyView();//显示空白视图
            } else if (size % 3 == 0) {
-               ptrPageView.showErooView();  //显示错误视图
+               getView().showErooView();  //显示错误视图
            } else {
-               ptrPageView.showContentView();
-               ptrPageView.refreshData(strings);   //视图进行刷新后视图
+               getView().showContentView();
+               getView().refreshData(strings);   //视图进行刷新后视图
            }
-           ptrPageView.stopRefresh();  //结束刷新
+           getView().stopRefresh();  //结束刷新
        }
    }
 
@@ -71,7 +69,7 @@ public class ReopListPresenter {
         @Override protected void onPreExecute() {
             super.onPreExecute();
                // 显示加载中...
-            ptrPageView.showLoadMoreView();
+            getView().showLoadMoreView();
         }
 
         @Override protected List<String> doInBackground(Void... params) {
@@ -92,13 +90,13 @@ public class ReopListPresenter {
             super.onPostExecute(datas);
             int size=new Random().nextInt(4);
             if (size==2){
-                ptrPageView.showLoadEnd();
+                getView().showLoadEnd();
                 return;
             }
             // 将加载到的数据添加到视图上
-            ptrPageView.addMoreData(datas);
+            getView().addMoreData(datas);
             // 隐藏加载中....
-            ptrPageView.hideLoadMore();
+            getView().hideLoadMore();
         }
     }
 

@@ -2,7 +2,6 @@ package com.feicuiedu.gitdroid.home;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.view.PtrPageView;
+import com.hannesdorfmann.mosby.mvp.MvpFragment;
 import com.mugen.Mugen;
 import com.mugen.MugenCallbacks;
 
@@ -32,7 +32,7 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
  * ViewPager中要切换的Fragment
  * Created by Administrator on 2016/6/30.
  */
- public  class RepoFragment extends Fragment implements PtrPageView{
+ public  class RepoFragment extends MvpFragment<PtrPageView,ReopListPresenter> implements PtrPageView{
     @Bind(R.id.lvRepos)
     ListView listView;
     @Bind(R.id.ptrClassicFrameLayout)
@@ -44,9 +44,9 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> data;
     private FooterView mFooterView;//这是上拉加载自定义的视图
-    private ReopListPresenter mReopListPresenter;//这是给视图做逻辑的
 
 
+    //提供本类的对象
     public static RepoFragment getInstance(String valus) {
         RepoFragment repoFragment = new RepoFragment();
         Bundle bundle = new Bundle();
@@ -63,88 +63,53 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
         data = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             data.add("我是第" + i + "条数据");
-
         }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_repo_list,container,false);
 
 
+    }
+    //mvp回调
+    @Override
+    public ReopListPresenter createPresenter() {
+
+        return new ReopListPresenter();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         ButterKnife.bind(this,view);
 
         adapter=new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,data);
         listView.setAdapter(adapter);
-        ptrClassicFrameLayout.setPtrHandler(new PtrDefaultHandler() {
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
-                tianjia();
-            }
-        });
-    }
 
-    private void tianjia(){
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                for (int i = 66; i < 88; i++) {
-                    data.add(0,"我有"+i+"个朋友");
-                }
-                ptrClassicFrameLayout.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                        ptrClassicFrameLayout.refreshComplete();
-                    }
-                });
-
-            }
-        }).start();
-
-        mReopListPresenter=new ReopListPresenter(this);
-
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, data);
-        listView.setAdapter(adapter);
         //下拉刷新的回调
         ptrClassicFrameLayout.setPtrHandler(new PtrDefaultHandler() {
-
-            @Override//下拉刷新的回调方法
+            @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
-               mReopListPresenter.loadData();
+                getPresenter().loadData();
             }
         });
-        mFooterView=new FooterView(getContext());
 
         //上拉加载的回调(滑动最后位置调用)
+        mFooterView=new FooterView(getContext());//自定义刷新视图
         Mugen.with(listView, new MugenCallbacks() {
             @Override//当listview最底下时调用
             public void onLoadMore() {
                 Log.d("hjkl;", "onLoadMore: ");
-             mReopListPresenter.loadMore();
+                getPresenter().loadMore();
             }
-
             @Override//是否正在加载 ,用来避免重复加载
             public boolean isLoading() {
                 Log.d("hjkl;", "isLoading: ");
                 Log.d("hjkl;", "isLoading: "+(listView.getFooterViewsCount()>0&&mFooterView.isLoading()));
                 return listView.getFooterViewsCount()>0&&mFooterView.isLoading();
             }
-
             @Override//是否所有数据都已加载完
             public boolean hasLoadedAllItems() {
                 Log.d("hjkl;", "hasLoadedAllItems: ");
@@ -155,11 +120,13 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
     }
 
 
-//点击空或错误视图进行重新刷新
+    //点击空或错误视图进行重新刷新
     @OnClick({R.id.emptyView,R.id.errorView})
     public void autoRefresh(){
         ptrClassicFrameLayout.autoRefresh();//刷新
     }
+
+
 
 
     //这是下拉刷新视图的实现-------------------------------------------------------------------------
@@ -191,8 +158,10 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
     }
 
 
-    //这是上拉加载视图的实现-------------------------------------------------------------------------
 
+
+
+    //这是上拉加载视图的实现-------------------------------------------------------------------------
     @Override//显示加载中视图
     public void showLoadMoreView() {
         if (listView.getFooterViewsCount()==0){
@@ -200,13 +169,11 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
         }
         mFooterView.showLoading();
     }
-
     @Override//显示错误视图
     public void showLoadMoreErro(String str) {
         if (listView.getFooterViewsCount()==0){
             listView.addFooterView(mFooterView);
         }
-
         mFooterView.showError(str);
     }
 
@@ -221,12 +188,10 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
     @Override//隐藏视图
     public void hideLoadMore() {
         listView.removeFooterView(mFooterView);//加载完隐藏掉
-
     }
 
     @Override//加载完数据视图
     public void addMoreData(List<String> data) {
     adapter.addAll(data);
-
     }
 }
