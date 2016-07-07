@@ -1,8 +1,10 @@
-package com.feicuiedu.gitdroid.home;
+package com.feicuiedu.gitdroid.github.home;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.feicuiedu.gitdroid.github.home.pager.RepoFragment;
 
 import java.util.ArrayList;
 import java.util.List;

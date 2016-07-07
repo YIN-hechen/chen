@@ -5,9 +5,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
-import com.feicuiedu.gitdroid.home.MainActivity;
 import com.feicuiedu.gitdroid.R;
-import com.feicuiedu.gitdroid.Utils.ActivityUtils;
+import com.feicuiedu.gitdroid.commons.ActivityUtils;
+import com.feicuiedu.gitdroid.github.main.MainActivity;
+import com.feicuiedu.gitdroid.github.login.LoginActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -21,8 +22,8 @@ import butterknife.OnClick;
 public class SplashActivity extends AppCompatActivity{
     @Bind(R.id.btnLogin) Button btnlogin;
     @Bind(R.id.btnEnter) Button btnenter;
-    private ActivityUtils mUtils;
 
+    private ActivityUtils activityUtils;
 
 
     @Override
@@ -36,17 +37,17 @@ public class SplashActivity extends AppCompatActivity{
     public void onContentChanged() {
         super.onContentChanged();
         ButterKnife.bind(this);
-        mUtils=new ActivityUtils(this);
+        activityUtils = new ActivityUtils(this);
     }
 
     @OnClick(R.id.btnLogin)
     public void login(){
+        activityUtils.startActivity(LoginActivity.class);
     }
 
     @OnClick(R.id.btnEnter)
     public void enter(){
-
-        mUtils.startActivity(MainActivity.class);
+    activityUtils.startActivity(MainActivity.class);
     }
 
 

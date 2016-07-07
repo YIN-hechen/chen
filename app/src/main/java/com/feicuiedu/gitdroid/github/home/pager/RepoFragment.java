@@ -1,4 +1,4 @@
-package com.feicuiedu.gitdroid.home;
+package com.feicuiedu.gitdroid.github.home.pager;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +11,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feicuiedu.gitdroid.R;
-import com.feicuiedu.gitdroid.view.PtrPageView;
+import com.feicuiedu.gitdroid.components.FooterView;
+import com.feicuiedu.gitdroid.github.home.pager.view.PtrPageView;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
 import com.mugen.Mugen;
 import com.mugen.MugenCallbacks;

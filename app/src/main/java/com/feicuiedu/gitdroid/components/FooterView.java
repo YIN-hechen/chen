@@ -1,4 +1,4 @@
-package com.feicuiedu.gitdroid.home;
+package com.feicuiedu.gitdroid.components;
 
 import android.content.Context;
 import android.util.AttributeSet;

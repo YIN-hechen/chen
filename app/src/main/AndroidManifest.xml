@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.feicuiedu.gitdroid"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.feicuiedu.gitdroid">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:name=".GitdroidApplication"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".spalsh.SplashActivity"
+        <activity
+            android:name=".spalsh.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".home.MainActivity">
+
+        <activity
+            android:name=".github.main.MainActivity"
+            android:screenOrientation="portrait">>
         </activity>
+
+        <activity
+            android:name=".github.login.LoginActivity"
+            android:screenOrientation="portrait">>
+        </activity>
+
     </application>
 
 </manifest>

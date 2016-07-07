@@ -1,4 +1,4 @@
-package com.feicuiedu.gitdroid.home;
+package com.feicuiedu.gitdroid.github.main;
 
 
 import android.os.Bundle;
@@ -11,8 +11,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.feicuiedu.gitdroid.R;
+import com.feicuiedu.gitdroid.commons.ActivityUtils;
+import com.feicuiedu.gitdroid.github.home.HotRepoFragment;
+import com.feicuiedu.gitdroid.github.login.LoginActivity;
+import com.feicuiedu.gitdroid.github.login.model.CurrentUser;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,20 +31,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Bind(R.id.toolbar)Toolbar toolbar;
     private MenuItem mMenuItem;
     private HotRepoFragment mHotRepoFragment;//要装在FrameLayout的Fragment
+    private Button btnlogin;  //登录按钮
+    private ActivityUtils activityUtils;  //辅助类
 
+    private ImageView ivIcon;//头像
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //没有登陆过
+   if (CurrentUser.isEmpty()){
+    btnlogin.setText(R.string.login_github);
+    return;
+   }
+     //已授权登录
+        btnlogin.setText(R.string.switch_account);//改成切换账号
+     getSupportActionBar().setTitle(CurrentUser.getUser().getName());//设置用户名
+        // 设置用户头像
+        String photoUrl = CurrentUser.getUser().getAvatar();
+        ImageLoader.getInstance().displayImage(photoUrl,ivIcon);
 
 
+    }
 
     @Override
     public void onContentChanged() {
         super.onContentChanged();
         ButterKnife.bind(this);//关联id
+
+        activityUtils = new ActivityUtils(this);
 
         navigationView.setNavigationItemSelectedListener(this); //设置navigationView侧滑菜单的监听
 
@@ -45,9 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         //添加Toolbar左边的小图标
-
         //添加Toolbar左边的小图标并进行动画效果
-
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(
                 this,drawerLayout,toolbar,
@@ -55,13 +81,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
         //Frangment的动态替换
         mHotRepoFragment=new HotRepoFragment();
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.container,mHotRepoFragment);
         fragmentTransaction.commit();
-
+         //头像
+        ivIcon=(ImageView)ButterKnife.findById(navigationView.getHeaderView(0),R.id.ivIcon);
+        //登录
+    btnlogin=(Button)ButterKnife.findById(navigationView.getHeaderView(0),R.id.btnLogin);
+    btnlogin.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+       activityUtils.startActivity(LoginActivity.class);
+        }
+    });
     }
 
     @Override//侧滑菜单监听的回调

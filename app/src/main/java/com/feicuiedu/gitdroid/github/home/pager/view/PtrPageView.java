@@ -1,4 +1,4 @@
-package com.feicuiedu.gitdroid.view;
+package com.feicuiedu.gitdroid.github.home.pager.view;
 
 import com.hannesdorfmann.mosby.mvp.MvpView;
 

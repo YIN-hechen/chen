@@ -1,4 +1,4 @@
-package com.feicuiedu.gitdroid.home;
+package com.feicuiedu.gitdroid.github.home;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -37,6 +37,7 @@ public class HotRepoFragment extends Fragment {
         ButterKnife.bind(this,view);
         adapter=new HotRepoPagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager);//标题
     }
+
 }
