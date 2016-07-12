@@ -1,29 +1,23 @@
 package com.feicuiedu.gitdroid.github.home;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.feicuiedu.gitdroid.github.home.model.Language;
 import com.feicuiedu.gitdroid.github.home.pager.RepoFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**是HotRepoFragment 布局中ViewPager的适配器
  * Created by Administrator on 2016/6/30.
  */
 public class HotRepoPagerAdapter extends FragmentPagerAdapter{
-     private List<String> languages;
-    public HotRepoPagerAdapter(FragmentManager fm) {
+     private List<Language> languages;
+    public HotRepoPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
-        languages=new ArrayList<>();
-        languages.add("chen1");
-        languages.add("chen2");
-        languages.add("chen3");
-        languages.add("chen4");
-        languages.add("chen5");
-        languages.add("chen6");
-        languages.add("chen7");
+       languages=Language.getDefaultLanguage(context);
     }
 
     @Override
@@ -37,8 +31,8 @@ public class HotRepoPagerAdapter extends FragmentPagerAdapter{
         return languages.size();
     }
 
-    @Override
+    @Override  //这是返回上面的标题
     public CharSequence getPageTitle(int position) {
-        return languages.get(position);
+        return languages.get(position).getName();
     }
 }

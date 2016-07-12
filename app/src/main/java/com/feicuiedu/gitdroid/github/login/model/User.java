@@ -2,10 +2,12 @@ package com.feicuiedu.gitdroid.github.login.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/7/6 0006.
  */
-public class User {
+public class User implements Serializable {
 
 //    "login": "octocat",
 //    "id": 1,

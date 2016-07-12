@@ -29,7 +29,10 @@
             android:name=".github.login.LoginActivity"
             android:screenOrientation="portrait">>
         </activity>
-
+        <activity
+            android:name=".context.ContentInfoActivity"
+            android:screenOrientation="portrait">>
+        </activity>
     </application>
 
 </manifest>

@@ -1,7 +1,7 @@
 package com.feicuiedu.gitdroid.github.login.model;
 
 /**
- * This class is a very simple implementation to cache current user's information.
+ *
  * I didn't persist these data in database or {@link android.content.SharedPreferences},
  * you can try to do it yourself.
  *

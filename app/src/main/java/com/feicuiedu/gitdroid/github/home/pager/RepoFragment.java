@@ -6,18 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.feicuiedu.gitdroid.R;
+import com.feicuiedu.gitdroid.commons.ActivityUtils;
 import com.feicuiedu.gitdroid.components.FooterView;
+import com.feicuiedu.gitdroid.context.ContentInfoActivity;
+import com.feicuiedu.gitdroid.github.home.model.Language;
+import com.feicuiedu.gitdroid.github.home.pager.model.Repo;
 import com.feicuiedu.gitdroid.github.home.pager.view.PtrPageView;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
 import com.mugen.Mugen;
 import com.mugen.MugenCallbacks;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -42,53 +45,60 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
     TextView emptyView;  //空白视图
     @Bind(R.id.errorView)
     TextView errorView;   //错误视图
-    private ArrayAdapter<String> adapter;
-    private ArrayList<String> data;
+    RepoAdapter mRepoAdapter;  //ListView的适配器
     private FooterView mFooterView;//这是上拉加载自定义的视图
 
+    private ActivityUtils activityUtils;
 
-    //提供本类的对象
-    public static RepoFragment getInstance(String valus) {
+    /**
+     * 获取(每次重新创建)当前Fragment对象
+     * <p/>
+     * 当Fragment需要进行参数传递时，应该使用Bundle进行处理,我们这里就是将语言类型传入了(在获取语言仓库列表数据时要用到)
+     * <p/>
+     */
+    //提供本类的对象.并把想要调用者的信息传进来了
+    public static RepoFragment getInstance(Language language) {
         RepoFragment repoFragment = new RepoFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("key_valus", valus);
+        bundle.putSerializable("key_valus",language);
         repoFragment.setArguments(bundle);
         return repoFragment;
     }
+    //把调用者传来的信息拿出来
+    private Language getLanguage() {
 
+        return (Language) getArguments().getSerializable("key_valus");
+    }
+
+    //mvp回调
+    @Override
+    public ReopListPresenter createPresenter() {
+        return new ReopListPresenter(getLanguage());
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //添加的数据
-        data = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            data.add("我是第" + i + "条数据");
-        }
+        activityUtils=new ActivityUtils(this);
+        mRepoAdapter=new RepoAdapter();
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_repo_list,container,false);
-
-
     }
-    //mvp回调
-    @Override
-    public ReopListPresenter createPresenter() {
-
-        return new ReopListPresenter();
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
-
-        adapter=new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,data);
-        listView.setAdapter(adapter);
-
+        listView.setAdapter(mRepoAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Repo item = mRepoAdapter.getItem(position);
+                ContentInfoActivity.intent(getContext(),item);
+            }
+        });
         //下拉刷新的回调
         ptrClassicFrameLayout.setPtrHandler(new PtrDefaultHandler() {
             @Override
@@ -97,9 +107,17 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
             }
         });
 
-        //上拉加载的回调(滑动最后位置调用)
-        mFooterView=new FooterView(getContext());//自定义刷新视图
+        //上拉加载的回调(滑动最后位置调用)自定义刷新视图
+        mFooterView=new FooterView(getContext());
+        // 当加载更多失败时，用户点击FooterView，会再次触发加载
+        mFooterView.setErrorClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                getPresenter().loadMore();
+            }
+        });
+        // 使用了一个微型库Mugen来处理滚动监听
         Mugen.with(listView, new MugenCallbacks() {
+            // ListView滚动到底部，触发加载更多，此处要执行加载更多的业务逻辑
             @Override//当listview最底下时调用
             public void onLoadMore() {
                 Log.d("hjkl;", "onLoadMore: ");
@@ -118,8 +136,15 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
                 return listView.getFooterViewsCount()>0&&mFooterView.isComplete();
             }
         }).start();
+        // 如果当前页面没有数据，开始自动刷新,走的是下拉刷新
+        if (mRepoAdapter.getCount() == 0) {
+            ptrClassicFrameLayout.postDelayed(new Runnable() {
+                @Override public void run() {
+                    ptrClassicFrameLayout.autoRefresh();
+                }
+            }, 200);
+        }
     }
-
 
     //点击空或错误视图进行重新刷新
     @OnClick({R.id.emptyView,R.id.errorView})
@@ -127,9 +152,11 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
         ptrClassicFrameLayout.autoRefresh();//刷新
     }
 
-
-
-
+    //当视图销毁时,ButterKnife也解除
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
     //这是下拉刷新视图的实现-------------------------------------------------------------------------
     @Override//内容视图
     public void showContentView() {
@@ -150,16 +177,16 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
         errorView.setVisibility(View.GONE);
     }
     @Override//刷新数据后视图
-    public void refreshData(List<String> data) {
-        adapter.addAll(data);
+    public void refreshData(List<Repo> data) {
+        mRepoAdapter.clear();
+        if (data==null)
+            return;
+       mRepoAdapter.addAll(data);
     }
     @Override// 下拉刷新完成
     public void stopRefresh() {
         ptrClassicFrameLayout.refreshComplete();
     }
-
-
-
 
 
     //这是上拉加载视图的实现-------------------------------------------------------------------------
@@ -192,7 +219,9 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
     }
 
     @Override//加载完数据视图
-    public void addMoreData(List<String> data) {
-    adapter.addAll(data);
+    public void addMoreData(List<Repo> data) {
+        if (data==null)
+            return;
+    mRepoAdapter.addAll(data);
     }
 }
